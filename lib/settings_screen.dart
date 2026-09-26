@@ -49,23 +49,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (context) => SimpleDialog(
         title: const Text('外观主题'),
         children: [
-          RadioGroup<String>(
-            groupValue: widget.store.themeMode,
-            onChanged: (value) => Navigator.pop(context, value),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 for (final mode in ['light', 'dark', 'system'])
                   RadioListTile<String>(
-                    value: mode,
-                    title: Text(AppTheme.label(mode)),
-                    subtitle: mode == 'system'
-                        ? const Text('随设备的深色模式自动切换')
-                        : null,
+                      value: mode,
+                      groupValue: widget.store.themeMode,
+                      title: Text(AppTheme.label(mode)),
+                      subtitle: mode == 'system'
+                          ? const Text('随设备的深色模式自动切换')
+                          : null,
+                      onChanged: (value) => Navigator.pop(context, value),
                   ),
               ],
             ),
-          ),
         ],
       ),
     );
@@ -82,19 +80,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     try {
       if (!restore) {
         final content = await widget.store.exportBackup();
-        final saved = await FilePicker.saveFile(
+        final saved = await FilePicker.platform.saveFile(
           fileName:
               '$appSlug-backup-${DateTime.now().toIso8601String().substring(0, 10)}.json',
           bytes: Uint8List.fromList(utf8.encode(content)),
-          mimeType: 'application/json',
         );
         if (saved != null && mounted) setState(() => _message = '备份已保存');
       } else {
-        final file = await FilePicker.pickFile(
+        final result = await FilePicker.platform.pickFiles(
           type: FileType.custom,
           allowedExtensions: ['json'],
         );
-        if (file == null || !mounted) return;
+        if (result == null || result.files.isEmpty || !mounted) return;
+        final file = result.files.single;
         final size = await file.length();
         if (size == null || size > 8 * 1024 * 1024) {
           throw const FormatException('备份文件过大或无法读取');
@@ -369,7 +367,7 @@ class _StorageScreenState extends State<StorageScreen> {
         ),
       );
     } else {
-      parent = await FilePicker.getDirectoryPath(dialogTitle: '选择下载保存位置');
+      parent = await FilePicker.platform.getDirectoryPath(dialogTitle: '选择下载保存位置');
     }
     if (parent == null || !mounted) return;
     final yes = await showDialog<bool>(

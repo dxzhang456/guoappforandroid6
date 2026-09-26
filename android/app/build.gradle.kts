@@ -3,6 +3,7 @@ import java.util.Base64
 
 plugins {
     id("com.android.application")
+    id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -22,7 +23,7 @@ if (releaseKey.exists()) {
 
 android {
     namespace = "com.duanju.duanju_app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = "28.2.13676358"
 
     compileOptions {
@@ -30,10 +31,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
     defaultConfig {
         applicationId = "com.duanju.duanju_app"
-        minSdk = 26
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 23                          // Android 6.0
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         manifestPlaceholders["appLabel"] = if (allSources) "真果鉴" else "红果鉴"
@@ -68,13 +73,9 @@ android {
     }
 }
 
-kotlin {
-    compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
-    }
+flutter {
+    source = "../.."
 }
-
-flutter { source = "../.." }
 
 tasks.withType<JavaCompile>().configureEach {
     if (name.contains("Release")) {

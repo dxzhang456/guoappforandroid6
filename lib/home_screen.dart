@@ -359,9 +359,6 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) => SimpleDialog(
         title: const Text('界面模式'),
         children: [
-          RadioGroup<String>(
-            groupValue: widget.store.displayMode,
-            onChanged: (value) => Navigator.pop(context, value),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -371,13 +368,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   'standard': '手机 / 电脑',
                 }.entries)
                   RadioListTile<String>(
-                    value: mode.key,
-                    autofocus: mode.key == widget.store.displayMode,
-                    title: Text(mode.value),
+                      value: mode.key,
+                      groupValue: widget.store.displayMode,
+                      autofocus: mode.key == widget.store.displayMode,
+                      title: Text(mode.value),
+                      onChanged: (value) => Navigator.pop(context, value),
                   ),
               ],
             ),
-          ),
         ],
       ),
     );

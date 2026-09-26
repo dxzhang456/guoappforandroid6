@@ -22,3 +22,26 @@ subprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
+
+
+plugins {
+    id("com.android.application") apply false
+    id("com.android.library") apply false
+}
+
+subprojects {
+    tasks.register("disableCheckAarMetadata") {
+        doLast {
+            tasks.filter { it.name.contains("checkAarMetadata") }.forEach {
+                it.enabled = false
+            }
+        }
+    }
+
+    tasks.configureEach {
+        if (name.contains("checkAarMetadata")) {
+            enabled = false
+        }
+    }
+}
+

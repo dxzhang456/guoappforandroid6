@@ -30,19 +30,19 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
       if (reload) {
         await widget.store.reload();
       } else if (export) {
-        await FilePicker.saveFile(
+        await FilePicker.platform.saveFile(
           fileName: '$appSlug-recovery.json',
           bytes: Uint8List.fromList(
             utf8.encode(widget.store.exportRecoveryData()),
-          ),
-          mimeType: 'application/json',
+          )
         );
       } else {
-        final file = await FilePicker.pickFile(
+        final result = await FilePicker.platform.pickFile(
           type: FileType.custom,
           allowedExtensions: ['json'],
         );
-        if (file == null || !mounted) return;
+        if (result == null || result.files.isEmpty || !mounted) return;
+        final file = result.files.single;
         final size = await file.length();
         if (size == null || size > 8 * 1024 * 1024) {
           throw const FormatException('备份文件过大或无法读取');
