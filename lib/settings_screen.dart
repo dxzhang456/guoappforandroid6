@@ -49,21 +49,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (context) => SimpleDialog(
         title: const Text('外观主题'),
         children: [
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (final mode in ['light', 'dark', 'system'])
-                  RadioListTile<String>(
-                      value: mode,
-                      groupValue: widget.store.themeMode,
-                      title: Text(AppTheme.label(mode)),
-                      subtitle: mode == 'system'
-                          ? const Text('随设备的深色模式自动切换')
-                          : null,
-                      onChanged: (value) => Navigator.pop(context, value),
-                  ),
-              ],
-            ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final mode in ['light', 'dark', 'system'])
+                RadioListTile<String>(
+                  value: mode,
+                  groupValue: widget.store.themeMode,
+                  title: Text(AppTheme.label(mode)),
+                  subtitle: mode == 'system'
+                      ? const Text('随设备的深色模式自动切换')
+                      : null,
+                  onChanged: (value) => Navigator.pop(context, value),
+                ),
+            ],
+          ),
         ],
       ),
     );
@@ -90,14 +90,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
         final result = await FilePicker.platform.pickFiles(
           type: FileType.custom,
           allowedExtensions: ['json'],
+          withData: true,
         );
+
         if (result == null || result.files.isEmpty || !mounted) return;
+
         final file = result.files.single;
-        final size = await file.length();
-        if (size == null || size > 8 * 1024 * 1024) {
-          throw const FormatException('备份文件过大或无法读取');
+
+        if (file.size > 8 * 1024 * 1024) {
+          throw const FormatException('备份文件过大');
         }
-        final content = utf8.decode(await file.readAsBytes());
+
+        final bytes = file.bytes;
+
+        if (bytes == null) {
+          throw const FormatException('无法读取备份文件');
+        }
+
+        final content = utf8.decode(bytes);
         final data = widget.store.validateBackup(content);
         if (!mounted) return;
         final accepted = await showDialog<bool>(
@@ -367,7 +377,9 @@ class _StorageScreenState extends State<StorageScreen> {
         ),
       );
     } else {
-      parent = await FilePicker.platform.getDirectoryPath(dialogTitle: '选择下载保存位置');
+      parent = await FilePicker.platform.getDirectoryPath(
+        dialogTitle: '选择下载保存位置',
+      );
     }
     if (parent == null || !mounted) return;
     final yes = await showDialog<bool>(

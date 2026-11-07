@@ -20,7 +20,7 @@ dependencies:
   path_provider: ^2.1.5
   shared_preferences: 2.5.3          # 降级，兼容 Dart 3.8
   flutter_foreground_task: 9.2.2
-  ffmpeg_kit_flutter_new_min_gpl: 2.6.2
+  ffmpeg_kit_min_gpl: 6.0.3+2-LTS
   file_picker: 9.2.1                # 降级，兼容较低 Dart
   crypto: ^3.0.7
   window_manager: ^0.5.1

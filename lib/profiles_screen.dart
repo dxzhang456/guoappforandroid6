@@ -34,20 +34,30 @@ class _ProfilesScreenState extends State<ProfilesScreen> {
           fileName: '$appSlug-recovery.json',
           bytes: Uint8List.fromList(
             utf8.encode(widget.store.exportRecoveryData()),
-          )
+          ),
         );
       } else {
-        final result = await FilePicker.platform.pickFile(
+        final result = await FilePicker.platform.pickFiles(
           type: FileType.custom,
           allowedExtensions: ['json'],
+          withData: true,
         );
+
         if (result == null || result.files.isEmpty || !mounted) return;
+
         final file = result.files.single;
-        final size = await file.length();
-        if (size == null || size > 8 * 1024 * 1024) {
-          throw const FormatException('备份文件过大或无法读取');
+
+        if (file.size > 8 * 1024 * 1024) {
+          throw const FormatException('备份文件过大');
         }
-        final content = utf8.decode(await file.readAsBytes());
+
+        final bytes = file.bytes;
+
+        if (bytes == null) {
+          throw const FormatException('无法读取备份文件');
+        }
+
+        final content = utf8.decode(bytes);
         widget.store.validateBackup(content);
         if (!mounted) return;
         final accepted = await showDialog<bool>(

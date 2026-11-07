@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:ffmpeg_kit_flutter_new_min_gpl/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_min_gpl/ffmpeg_kit.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';

@@ -359,23 +359,23 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) => SimpleDialog(
         title: const Text('界面模式'),
         children: [
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (final mode in const {
-                  'auto': '自动识别设备',
-                  'television': '电视 / 遥控器',
-                  'standard': '手机 / 电脑',
-                }.entries)
-                  RadioListTile<String>(
-                      value: mode.key,
-                      groupValue: widget.store.displayMode,
-                      autofocus: mode.key == widget.store.displayMode,
-                      title: Text(mode.value),
-                      onChanged: (value) => Navigator.pop(context, value),
-                  ),
-              ],
-            ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final mode in const {
+                'auto': '自动识别设备',
+                'television': '电视 / 遥控器',
+                'standard': '手机 / 电脑',
+              }.entries)
+                RadioListTile<String>(
+                  value: mode.key,
+                  groupValue: widget.store.displayMode,
+                  autofocus: mode.key == widget.store.displayMode,
+                  title: Text(mode.value),
+                  onChanged: (value) => Navigator.pop(context, value),
+                ),
+            ],
+          ),
         ],
       ),
     );
